@@ -1,15 +1,31 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+#from flask_moment import Moment
+from config import config
+from flask_login import LoginManager
 
-app = Flask(__name__)
-#import  os
-#print os.environ.keys()
-#print os.environ.get('FLASKR_SETTINGS')
-#加载配置文件内容
-app.config.from_object('app.setting')     #模块下的setting文件名，不用加py后缀
-app.config.from_envvar('FLASKR_SETTINGS')   #环境变量，指向配置文件setting的路径
+bootstrap = Bootstrap()
+#mail = Mail()
+#moment = Moment()
+db = SQLAlchemy()
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
 
-#创建数据库对象
-db = SQLAlchemy(app)
-from app import views, models
+
+
+def create_app(config_name):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
+    bootstrap.init_app(app)
+    #moment.init_app(app)
+    db.init_app(app)
+    login_manager.init_app(app)
+    #路由和其他处理程序定义
+    #...
+    return app
+
